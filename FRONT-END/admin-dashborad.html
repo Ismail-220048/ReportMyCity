@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CivicTrack Admin</title>
+
+<link rel="stylesheet" href="admin.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo"><img src="../asserts/logo.png" alt="CivicTrack"></img></div>
+    <div class="menu">
+      <ul class="menu">
+        <li onclick="showSection('dashboard')">Dashboard</li>
+        <li onclick="showSection('active')">Active Complaints</li>
+        <li onclick="showSection('resolved')">Resolved Complaints</li>
+        <li onclick="showSection('mapview')">Map View</li>
+        <li onclick="showSection('users')">Users</li>
+        <li onclick="showSection('reports')">Reports</li>
+        <li onclick="showSection('settings')">Settings</li>
+      </ul>
+    </div>
+    <div class="logout">
+    Logout
+    <svg class="exit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+    </svg>
+</div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="welcome">
+        <h3>Welcome, Admin</h3>
+      </div>
+      <div class="actions">
+        <div class="notification">🔔</div>
+        <input type="text" placeholder="Search complaints...">
+        <div class="profile">A</div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD SECTION -->
+    <div id="dashboard" class="section active">
+      <div class="cards">
+        <div class="card"><h2>2,847</h2><p>Total Complaints</p></div>
+        <div class="card"><h2>423</h2><p>Active Complaints</p></div>
+        <div class="card"><h2>2,104</h2><p>Resolved Complaints</p></div>
+        <div class="card"><h2>320</h2><p>Pending Complaints</p></div>
+      </div>
+
+      <div class="map-section">
+        <h3>Complaint Locations</h3>
+        <div id="map"></div>
+      </div>
+
+      <div class="charts">
+        <div class="chart-card"><canvas id="categoryChart"></canvas></div>
+        <div class="chart-card"><canvas id="monthlyChart"></canvas></div>
+      </div>
+
+      <div class="table-section">
+        <h3>Recent Complaints</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>User</th><th>Category</th><th>Location</th><th>Status</th><th>Date</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>CMP-001</td><td>John Doe</td><td>Road Damage</td><td>Main St</td>
+              <td><span class="active-status">Active</span></td><td>2026-03-07</td><td>View</td>
+            </tr>
+            <tr>
+              <td>CMP-002</td><td>Jane Smith</td><td>Water Leak</td><td>Oak Ave</td>
+              <td><span class="pending-status">Pending</span></td><td>2026-03-06</td><td>View</td>
+            </tr>
+            <tr>
+              <td>CMP-003</td><td>Mike</td><td>Street Light</td><td>Pine Rd</td>
+              <td><span class="resolved-status">Resolved</span></td><td>2026-03-05</td><td>View</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ACTIVE COMPLAINTS SECTION -->
+    <div id="active" class="section">
+      <h2>Active Complaints</h2>
+      <div class="complaint-card">
+        <div class="complaint-header" onclick="toggleComplaint(this)">
+          <img src="user.jpg" class="user-photo">
+          <div class="complaint-info">
+            <h3>Road Damage</h3>
+            <p>John Doe • Main Street</p>
+          </div>
+          <span class="status active">Active</span>
+        </div>
+        <div class="complaint-details">
+          <p>Large pothole in the middle of the road causing traffic issues.</p>
+          <img src="complaint.jpg" class="complaint-image">
+          <button class="resolve-btn" onclick="resolveComplaint(event)">Resolve</button>
+        </div>
+      </div>
+
+      <div class="complaint-card">
+        <div class="complaint-header" onclick="toggleComplaint(this)">
+          <img src="user2.jpg" class="user-photo">
+          <div class="complaint-info">
+            <h3>Water Leak</h3>
+            <p>Jane Smith • Oak Avenue</p>
+          </div>
+          <span class="status active">Active</span>
+        </div>
+        <div class="complaint-details">
+          <p>Continuous water leakage from underground pipe near the sidewalk.</p>
+          <img src="complaint2.jpg" class="complaint-image">
+          <button class="resolve-btn" onclick="resolveComplaint(event)">Resolve</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESOLVED SECTION -->
+    <div id="resolved" class="section">
+      <h2>Resolved Complaints</h2>
+      <div class="complaint-card">
+        <div class="complaint-header" onclick="toggleComplaint(this)">
+          <img src="user.jpg" class="user-photo">
+          <div class="complaint-info">
+            <h3>Road Damage</h3>
+            <p>John Doe • Main Street</p>
+          </div>
+          <span class="status resolved">Resolved</span>
+        </div>
+        <div class="complaint-details">
+          <p class="description">Large pothole was reported by the citizen causing vehicle damage.</p>
+          <div class="photo-group">
+            <div class="photo-box"><p><strong>Before (Citizen Upload)</strong></p><img src="complaint.jpg"></div>
+            <div class="photo-box"><p><strong>After (Official Repair Proof)</strong></p><img src="repair.jpg"></div>
+          </div>
+          <p class="resolution-note">✔ Road repaired and resurfaced by municipal road department.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAP VIEW SECTION -->
+    <div id="mapview" class="section">
+      <h2>Complaint Heatmap</h2>
+      <div id="complaintMap"></div>
+      <div class="map-legend">
+        <div><span class="legend yellow"></span> Low Complaints</div>
+        <div><span class="legend orange"></span> Moderate Complaints</div>
+        <div><span class="legend red"></span> High Complaint Zone</div>
+      </div>
+    </div>
+
+    <!-- USERS SECTION -->
+    <div id="users" class="section">
+      <div class="users-header">
+        <h2>User Management</h2>
+        <input type="text" id="userSearch" placeholder="Search by User ID..." onkeyup="filterUsers()">
+      </div>
+      <div class="users-table-wrapper">
+        <table class="users-table" id="usersTable">
+          <thead>
+            <tr>
+              <th>User ID</th><th>Name</th><th>Email</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody">
+            <tr><td>USR001</td><td>John Doe</td><td>john@example.com</td><td><span class="user-status active">Active</span></td><td><button class="block-btn" onclick="toggleBlock(this)">Block</button></td></tr>
+            <tr><td>USR002</td><td>Jane Smith</td><td>jane@example.com</td><td><span class="user-status active">Active</span></td><td><button class="block-btn" onclick="toggleBlock(this)">Block</button></td></tr>
+            <tr class="blocked-row"><td>USR003</td><td>Mike Johnson</td><td>mike@example.com</td><td><span class="user-status blocked">Blocked</span></td><td><button class="unblock-btn" onclick="toggleBlock(this)">Unblock</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div id="reports" class="section"><h2>Reports</h2></div>
+    <!-- SETTINGS -->
+    <div id="settings" class="section"><h2>Settings</h2></div>
+
+  </div>
+</div>
+
+<script src="admin.js"></script>
+
+
+</body>
+</html>
