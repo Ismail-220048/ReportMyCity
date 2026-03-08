@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Page</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+
+/* ADD YOUR BACKGROUND IMAGE HERE */
+background-size:cover;
+background-position:center;
+
+background-color:#0f172a;
+background-image:url("/home/ismail/Desktop/team-project/asserts/sunset-sea.jpg");
+
+}
+
+/* Main Container */
+
+.container{
+
+width:900px;
+height:500px;
+
+display:flex;
+
+background:rgba(0,0,0,0.55);
+
+backdrop-filter:blur(10px);
+
+border-radius:15px;
+
+overflow:hidden;
+
+box-shadow:0 20px 40px rgba(0,0,0,0.6);
+
+}
+
+/* Left Section */
+
+.left{
+
+flex:1;
+
+padding:60px;
+
+color:white;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+}
+
+.left h1{
+
+font-size:40px;
+margin-bottom:15px;
+
+}
+
+.left p{
+
+font-size:14px;
+opacity:0.8;
+margin-bottom:25px;
+
+}
+
+/* Social Icons */
+
+.social{
+
+display:flex;
+gap:15px;
+
+}
+
+.social i{
+
+font-size:18px;
+cursor:pointer;
+
+}
+
+/* Right Section */
+
+.right{
+
+flex:1;
+
+padding:60px;
+
+color:white;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+}
+
+/* Form */
+
+.right h2{
+
+margin-bottom:25px;
+
+}
+
+.input-box{
+
+margin-bottom:20px;
+
+}
+
+.input-box input{
+
+width:100%;
+
+padding:12px;
+
+border:none;
+
+border-bottom:2px solid white;
+
+background:transparent;
+
+color:white;
+
+outline:none;
+
+}
+
+/* Remember */
+
+.remember{
+
+display:flex;
+
+justify-content:space-between;
+
+font-size:13px;
+
+margin-bottom:25px;
+
+}
+
+/* Button */
+
+button{
+
+width:100%;
+
+padding:12px;
+
+border:none;
+
+background:#e11d48;
+
+color:white;
+
+font-weight:600;
+
+border-radius:5px;
+
+cursor:pointer;
+
+transition:0.3s;
+
+}
+
+button:hover{
+
+background:#be123c;
+
+}
+
+/* Sign up */
+
+.signup{
+
+text-align:center;
+
+margin-top:15px;
+
+font-size:14px;
+
+}
+
+.signup a{
+
+color:#f43f5e;
+
+text-decoration:none;
+
+}.social-login{
+display:flex;
+justify-content:center;   /* centers buttons horizontally */
+gap:40px;
+margin-top:80px;
+}
+
+/* Google Button */
+
+.google-btn{
+display:inline-flex;
+align-items:center;
+gap:5px;
+background:white;
+color:#333;
+padding:4px 8px;
+border-radius:4px;
+font-size:12px;
+cursor:pointer;
+border:1px solid #ddd;
+width: 100px;
+}
+
+.google-btn img{
+width:14px;
+height:14px;
+}
+
+/* GitHub Button */
+
+.github-btn{
+display:inline-flex;
+align-items:center;
+gap:5px;
+background:#24292e;
+color:white;
+padding:4px 8px;
+border-radius:4px;
+font-size:12px;
+cursor:pointer;
+border:1px solid #24292e;
+width: 100px;
+}
+
+.github-btn img{
+width:14px;
+height:14px;
+filter:invert(1);
+}
+/* Hover effect */
+.google-btn:hover,
+.github-btn:hover{
+transform:scale(1.05);
+}
+
+/* Click effect */
+.google-btn:active,
+.github-btn:active{
+transform:scale(0.95);
+box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* Smooth animation */
+.google-btn,
+.github-btn{
+transition:0.15s;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="left">
+
+<h1>Welcome!</h1>
+
+<p>Welcome to our new website. Please login to continue.</p>
+
+<div class="social-login">
+
+    <div class="google-btn">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="google">
+        <span>Google</span>
+    </div>
+
+    <div class="github-btn">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="github">
+        <span>GitHub</span>
+    </div>
+
+</div>
+</div>
+
+
+<div class="right">
+
+<h2>Sign In</h2>
+
+<div class="input-box">
+<input type="email" id="email" placeholder="Email">
+</div>
+
+<div class="input-box">
+<input type="password" id="password" placeholder="Password">
+</div>
+
+<div class="remember">
+
+<label>
+<input type="checkbox"> Remember me
+</label>
+
+<a href="#">Forgot password?</a>
+
+</div>
+
+<button onclick="loginUser()">Sign In</button>
+
+<div class="signup">
+
+Don't have an account? <a href="signup.html">Sign Up</a><br>
+
+
+</div>
+
+</div>
+
+</div>
+<script>
+
+function loginUser(){
+
+const email = document.getElementById("email").value.trim();
+const password = document.getElementById("password").value.trim();
+
+if(!email || !password){
+    alert("Please fill all fields");
+    return;
+}
+
+fetch("../BACKEND/login.php",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+email:email,
+password:password
+})
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+console.log(data);
+
+if(data.success){
+
+alert("Login successful");
+
+// redirect to dashboard
+window.location.href="dashboard.html";
+
+}else{
+
+alert(data.error);
+
+}
+
+})
+
+.catch(err=>{
+
+console.error(err);
+alert("Server error");
+
+});
+
+}
+
+</script>
+</body>
+</html>
