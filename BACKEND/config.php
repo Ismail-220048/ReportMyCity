@@ -6,9 +6,9 @@ use Twilio\Rest\Client;
 // ==========================
 // Twilio Credentials
 // ==========================
-define('TWILIO_SID', 'AC13d525f5bc6f94b7c93520828ba17fb3');
-define('TWILIO_AUTH_TOKEN', 'f0ec1a6e06e318c6c425b3d92ddc554b');
-define('TWILIO_PHONE', '+19703298748');
+define('TWILIO_SID', '');
+define('TWILIO_AUTH_TOKEN', '');
+define('TWILIO_PHONE', '');
 
 // ==========================
 // MongoDB Connection
