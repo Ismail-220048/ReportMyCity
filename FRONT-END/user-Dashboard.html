@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<title>User Dashboard - CitizenConnect</title>
+
+<link rel="stylesheet" href="user-Dashboard.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+</head>
+
+<body>
+
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+<h2>CitizenConnect</h2>
+
+<a href="#" onclick="showSection('dashboard')">Dashboard</a>
+<a href="#" onclick="showSection('submit')">Submit Complaint</a>
+<a href="#" onclick="showSection('complaints')">My Complaints</a>
+
+</div>
+
+
+<div class="main">
+
+<!-- DASHBOARD -->
+
+<div id="dashboard">
+
+<h1>User Dashboard</h1>
+
+<div class="stats">
+
+<div class="card total">
+<h2>12</h2>
+<p>Total Complaints</p>
+</div>
+
+<div class="card pending">
+<h2>4</h2>
+<p>Pending</p>
+</div>
+
+<div class="card progress">
+<h2>5</h2>
+<p>In Progress</p>
+</div>
+
+<div class="card resolved">
+<h2>3</h2>
+<p>Resolved</p>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- SUBMIT COMPLAINT -->
+
+<div id="submit" style="display:none">
+
+<h2>Submit Complaint</h2>
+
+<form id="complaintForm">
+
+<label>Complaint Title</label>
+<input type="text" required>
+
+<label>Name</label>
+<input type="text" id="nameInput" required>
+
+<label>Email</label>
+<input type="email" required>
+
+<label>Category</label>
+<select>
+<option>Road Issue</option>
+<option>Garbage</option>
+<option>Street Light</option>
+</select>
+
+<label>Description</label>
+<textarea required></textarea>
+
+<label>Upload Image</label>
+<input type="file" id="imageUpload">
+
+<img id="preview">
+
+<label>Location</label>
+<div id="map"></div>
+
+<input type="text" id="latitude" placeholder="Latitude" readonly>
+<input type="text" id="longitude" placeholder="Longitude" readonly>
+
+<button type="submit">Submit Complaint</button>
+
+</form>
+
+</div>
+
+
+<!-- MY COMPLAINTS -->
+
+<div id="complaints" style="display:none">
+
+<h2>My Complaints</h2>
+
+<input type="text" id="searchInput" placeholder="Search Complaint ID" onkeyup="searchComplaint()">
+
+<div class="complaints">
+
+<div class="complaint-card">
+
+<p><b>ID:</b> CC1023</p>
+<p>Street Light Not Working</p>
+
+<span class="status progress-status">In Progress</span>
+
+<button>Track</button>
+
+</div>
+
+<div class="complaint-card">
+
+<p><b>ID:</b> CC1024</p>
+<p>Garbage Overflow</p>
+
+<span class="status pending-status">Pending</span>
+
+<button>Track</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script src="user-Dashboard.js"></script>
+
+</body>
+</html>
