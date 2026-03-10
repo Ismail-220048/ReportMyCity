@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Officer/Admin Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ======= Global ======= */
+* { box-sizing:border-box; font-family:'Poppins',sans-serif; margin:0; padding:0; }
+body { background:#f3f4f6; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+
+/* ======= Container ======= */
+.container { background:white; border-radius:12px; padding:40px; width:900px; max-width:95%; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+h2 { text-align:center; margin-bottom:30px; color:#1f2937; }
+
+/* ======= Tabs ======= */
+.tabs { display:flex; justify-content:center; margin-bottom:30px; }
+.tabs button { background:#e5e7eb; border:none; padding:10px 30px; margin:0 5px; cursor:pointer; border-radius:8px; font-weight:500; transition:0.3s; }
+.tabs button.active { background:#2563eb; color:white; }
+
+/* ======= Forms ======= */
+form { display:none; width:100%; }
+form.active { display:block; }
+form label { font-weight:500; margin-bottom:5px; }
+form input, form select { width:100%; padding:12px 15px; border-radius:8px; border:1px solid #cbd5e1; font-size:16px; outline:none; transition:0.2s; margin-bottom:20px; }
+form input:focus, form select:focus { border-color:#2563eb; box-shadow:0 0 0 2px rgba(37,99,235,0.2); }
+
+/* ======= Two Columns ======= */
+.signup-columns { display:flex; gap:50px; flex-wrap:wrap; margin-bottom:30px; }
+.column { flex:1; min-width:250px; display:flex; flex-direction:column; gap:20px; }
+
+/* ======= Button ======= */
+.btn { width:100%; padding:15px; background:#2563eb; color:white; font-size:18px; font-weight:600; border:none; border-radius:10px; cursor:pointer; transition:0.3s; }
+.btn:hover { background:#1d4ed8; }
+
+/* ======= Login Form Centered ======= */
+#loginForm { max-width:400px; margin:0 auto; }
+
+/* ======= Responsive ======= */
+@media(max-width:700px){ .signup-columns { flex-direction:column; gap:20px; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Officer/Admin Portal</h2>
+  
+  <!-- Tabs -->
+  <div class="tabs">
+    <button id="loginTab" class="active" onclick="showTab('login')">Login</button>
+    <button id="signupTab" onclick="showTab('signup')">Sign Up</button>
+  </div>
+
+  <!-- ===== LOGIN FORM ===== -->
+  <form id="loginForm" class="active">
+    <label for="loginEmail">Email</label>
+    <input type="email" id="loginEmail" placeholder="Enter email" required>
+
+    <label for="loginPassword">Password</label>
+    <input type="password" id="loginPassword" placeholder="Enter password" required>
+
+    <label for="loginRole">Role</label>
+    <select id="loginRole" required>
+      <option value="">Select Role</option>
+      <option value="admin">Admin</option>
+      <option value="officer">Officer</option>
+    </select>
+
+    <button type="submit" class="btn">Login</button>
+  </form>
+
+  <!-- ===== SIGNUP FORM ===== -->
+  <form id="signupForm">
+    <div class="signup-columns">
+      <!-- Column 1 -->
+      <div class="column">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="Enter full name" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Enter email" required>
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" placeholder="Enter phone number" required>
+      </div>
+
+      <!-- Column 2 -->
+      <div class="column">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter password" required>
+
+        <label for="role">Role</label>
+        <select id="role" onchange="handleRoleChange()" required>
+          <option value="">Select Role</option>
+          <option value="admin">Admin</option>
+          <option value="officer">Officer</option>
+        </select>
+
+        <label id="dynamicLabel" for="dynamicSelect">Category / District</label>
+        <select id="dynamicSelect" required>
+          <option value="">Select</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn">Sign Up</button>
+  </form>
+</div>
+
+<script>
+// ===== Tab Toggle =====
+function showTab(tab){
+    if(tab==='login'){
+        document.getElementById('loginForm').classList.add('active');
+        document.getElementById('signupForm').classList.remove('active');
+        document.getElementById('loginTab').classList.add('active');
+        document.getElementById('signupTab').classList.remove('active');
+    } else {
+        document.getElementById('loginForm').classList.remove('active');
+        document.getElementById('signupForm').classList.add('active');
+        document.getElementById('loginTab').classList.remove('active');
+        document.getElementById('signupTab').classList.add('active');
+    }
+}
+
+// ===== Role-Based Dynamic Dropdown =====
+const officerCategories = ["Road Damage","Water Leak","Street Light","Garbage","Noise"];
+const districts = ["Anantapur","Chittoor","East Godavari","Guntur","Kadapa","Krishna","Kurnool","Nellore","Prakasam","Srikakulam","Visakhapatnam","Vizianagaram","West Godavari"];
+
+function handleRoleChange(){
+    const role = document.getElementById("role").value;
+    const dynamicSelect = document.getElementById("dynamicSelect");
+    const dynamicLabel = document.getElementById("dynamicLabel");
+
+    dynamicSelect.innerHTML = "<option value=''>Select</option>";
+
+    if(role==="officer"){
+        dynamicLabel.innerText = "Category";
+        officerCategories.forEach(cat => {
+            let option = document.createElement("option");
+            option.value = cat; option.text = cat;
+            dynamicSelect.add(option);
+        });
+    } else if(role==="admin"){
+        dynamicLabel.innerText = "District";
+        districts.forEach(dist => {
+            let option = document.createElement("option");
+            option.value = dist; option.text = dist;
+            dynamicSelect.add(option);
+        });
+    } else {
+        dynamicLabel.innerText = "Category / District";
+    }
+}
+
+// ===== LOGIN SUBMISSION =====
+document.getElementById("loginForm").addEventListener("submit", e=>{
+    e.preventDefault();
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+    const role = document.getElementById("loginRole").value;
+
+    fetch("../BACKEND/af-login.php", {
+        method:"POST",
+        headers:{"Content-Type":"application/x-www-form-urlencoded"},
+        body:`email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&role=${encodeURIComponent(role)}`
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        if(data.status==="success"){
+            alert("Login successful!");
+            window.location.href = (role==="admin") ? "admin-dashborad.html" : "officer-dashboard.html";
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err=>console.error(err));
+});
+
+// ===== SIGNUP SUBMISSION =====
+document.getElementById("signupForm").addEventListener("submit", e => {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const role = document.getElementById("role").value;
+    const dynamic = document.getElementById("dynamicSelect").value;
+
+    if(!name || !email || !phone || !password || !role || !dynamic){
+        alert("All fields are required!");
+        return;
+    }
+
+    // If all fields filled, send data to PHP
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("phone", phone);
+    formData.append("password", password);
+    formData.append("role", role);
+    formData.append("dynamic", dynamic);
+
+    fetch("../BACKEND/af-signup.php", {
+        method: "POST",
+        body: formData
+    }).then(res => res.json())
+      .then(data => {
+          alert(data.message);
+          if(data.status === "success"){
+              // redirect to login
+              showTab('login');
+          }
+      });
+});
+</script>
+
+</body>
+</html>

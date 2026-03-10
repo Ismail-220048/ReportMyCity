@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{height:100vh;display:flex;align-items:center;justify-content:center;background:#0f172a;background-size:cover;background-position:center;background-image:url("../asserts/sunset-sea.jpg");}
+.container{width:900px;height:520px;display:flex;background:rgba(0,0,0,0.55);backdrop-filter:blur(10px);border-radius:15px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.6);}
+.left{flex:1;padding:60px;color:white;display:flex;flex-direction:column;justify-content:center;}
+.left h1{font-size:38px;margin-bottom:15px;}
+.left p{font-size:14px;opacity:0.8;}
+.right{flex:1;padding:50px;color:white;display:flex;flex-direction:column;justify-content:center;}
+.right h2{margin-bottom:25px;}
+.input-box{margin-bottom:20px;}
+.input-box input{width:100%;padding:12px;border:none;border-bottom:2px solid white;background:transparent;color:white;outline:none;}
+button{width:100%;padding:12px;border:none;background:#e11d48;color:white;font-weight:600;border-radius:5px;cursor:pointer;transition:.3s;}
+button:hover{background:#be123c;}
+.signup{text-align:center;margin-top:15px;font-size:14px;}
+.signup a{color:#f43f5e;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="left">
+    <h1>Create Account</h1>
+    <p>Register your mobile number to verify with OTP and start using CivicTrack.</p>
+  </div>
+
+  <div class="right">
+    <h2>Sign Up</h2>
+    <div class="input-box">
+      <input type="text" id="fname" placeholder="First Name">
+    </div>
+    <div class="input-box">
+      <input type="text" id="lname" placeholder="Last Name">
+    </div>
+    <div class="input-box">
+      <input type="tel" id="phone" placeholder="Phone Number">
+    </div>
+    <button onclick="continueToOTP()">Continue</button>
+    <div class="signup">
+      Already have an account? <a href="login.html">Sign In</a>
+    </div>
+  </div>
+</div>
+<script>
+
+function continueToOTP(){
+
+    const fname = document.getElementById("fname").value.trim();
+    const lname = document.getElementById("lname").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+
+    if(!fname || !lname || !phone){
+        alert("Please fill all fields");
+        return;
+    }
+
+    // store user data
+    localStorage.setItem("fname",fname);
+    localStorage.setItem("lname",lname);
+    localStorage.setItem("phone", "+91"+phone);
+
+    fetch("http://localhost:8000/BACKEND/send_otp.php",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body: JSON.stringify({
+            phone_number: "+91"+phone
+        })
+
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        console.log(data);
+
+        if(data.success){
+            window.location.href="otp.html";
+        }else{
+            alert(data.error);
+        }
+
+    })
+    .catch(err=>{
+        console.error(err);
+        alert("Server error");
+    });
+
+}
+
+</script>
+
+</body>
+</html>
