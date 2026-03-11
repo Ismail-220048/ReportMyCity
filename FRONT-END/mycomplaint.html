@@ -2,12 +2,13 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <title>My Complaints</title>
 
 <link rel="stylesheet" href="mycomplaint.css">
 
- <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -86,6 +87,7 @@ onkeyup="searchComplaint()"
 
 <div class="complaints">
 
+<!-- Complaint 1 -->
 
 <div class="complaint-card">
 
@@ -100,11 +102,12 @@ onkeyup="searchComplaint()"
 
 <img src="images/streetlight.jpg">
 
-<button>Track Complaint</button>
+<button onclick="trackComplaint('CC1023')">Track Complaint</button>
 
 </div>
 
 
+<!-- Complaint 2 -->
 
 <div class="complaint-card">
 
@@ -119,11 +122,12 @@ onkeyup="searchComplaint()"
 
 <img src="images/garbage.jpg">
 
-<button>Track Complaint</button>
+<button onclick="trackComplaint('CC1024')">Track Complaint</button>
 
 </div>
 
 
+<!-- Complaint 3 -->
 
 <div class="complaint-card">
 
@@ -138,14 +142,109 @@ onkeyup="searchComplaint()"
 
 <img src="images/waterleak.jpg">
 
-<button>Track Complaint</button>
-
-</div>
-
+<button onclick="trackComplaint('CC1025')">Track Complaint</button>
 
 </div>
 
 </div>
+
+</div>
+
+
+<!-- Tracking Modal -->
+
+<div id="trackingModal" class="tracking-modal">
+
+<div class="tracking-box">
+
+<div class="tracking-header">
+
+<h2 class="welcome-title">
+Welcome, <span id="citizenName">Citizen</span>
+</h2>
+
+<span class="close-btn" onclick="closeTracking()">×</span>
+
+</div>
+
+<h3 class="portal-title">Welcome to CitizenConnect</h3>
+
+<p class="welcome-text">
+Your complaint has been successfully registered. The municipal department is currently reviewing your issue.
+You can monitor the complaint progress below.
+</p>
+
+
+<!-- Tracking Info -->
+
+<div class="tracking-info">
+
+<div class="info-row">
+<span>Complaint ID</span>
+<b id="trackID"></b>
+</div>
+
+<div class="info-row">
+<span>Status</span>
+<b class="status-progress">In Progress</b>
+</div>
+
+<div class="info-row">
+<span>Department</span>
+<b>Municipal Maintenance</b>
+</div>
+
+<div class="info-row">
+<span>Expected Resolution</span>
+<b>Within 48 Hours</b>
+</div>
+
+</div>
+
+
+<!-- Progress Tracker -->
+
+<h3 class="progress-heading">Complaint Progress</h3>
+
+<div class="progress-container">
+
+<div id="progressLine" class="progress-line"></div>
+
+<div id="step1" class="progress-step">
+<div class="circle">✓</div>
+<p>Submitted</p>
+</div>
+
+<div id="step2" class="progress-step">
+<div class="circle">✓</div>
+<p>Verified</p>
+</div>
+
+<div id="step3" class="progress-step">
+<div class="circle">⚙</div>
+<p>Processing</p>
+</div>
+
+<div id="step4" class="progress-step">
+<div class="circle">🏁</div>
+<p>Resolved</p>
+</div>
+
+</div>
+
+
+<!-- Officer Update -->
+
+<div class="official-update">
+
+<h4>Official Update</h4>
+<p id="officialMessage"></p>
+</div>
+
+</div>
+
+</div>
+
 
 <script src="mycompiants.js"></script>
 
