@@ -116,7 +116,16 @@ function filterUsers() {
 
 // SESSION INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is logged in
+    const userRole = localStorage.getItem("userRole");
     const adminName = localStorage.getItem("userName");
+    
+    if(!userRole || userRole !== "admin") {
+        alert("Unauthorized access. Please login first.");
+        window.location.href = "../login-signup/login.html";
+        return;
+    }
+    
     if(adminName) {
         document.querySelector(".welcome h3").innerText = "Welcome, " + adminName;
         document.querySelector(".profile").innerText = adminName[0].toUpperCase();
