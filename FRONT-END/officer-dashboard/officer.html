@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Leaflet for Maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="officer.css">
 </head>
 <body>
     <div class="app-container">
@@ -20,9 +20,9 @@
                 <i class="fa-solid fa-shield-halved"></i> CitizenConnect Admin
             </div>
             <nav class="top-menu">
-                <a href="index.html" class="active"><i class="fa-solid fa-briefcase"></i> Dashboard</a>
-                <a href="complaints.html"><i class="fa-solid fa-users"></i> Manage Complaints</a>
-                <a href="analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+                <a href="officer.html" class="active"><i class="fa-solid fa-briefcase"></i> Dashboard</a>
+                <a href="officer-omplaints.html"><i class="fa-solid fa-users"></i> Manage Complaints</a>
+                <a href="officer-analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
             </nav>
             <div class="top-right">
                 <span class="time" id="currentTime"><i class="fa-regular fa-clock"></i> Loading...</span>
@@ -44,10 +44,11 @@
                     </div>
                 </div>
                 <nav class="side-menu">
-                    <a href="index.html" class="active"><i class="fa-solid fa-briefcase"></i> Dashboard</a>
-                    <a href="complaints.html"><i class="fa-solid fa-users"></i> Manage Complaints</a>
-                    <a href="analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
-                    <a href="workflow.html"><i class="fa-solid fa-clipboard-check"></i> Officer Workflow</a>
+                    <a href="officer.html" class="active"><i class="fa-solid fa-briefcase"></i> Dashboard</a>
+                    <a href="officer-omplaints.html"><i class="fa-solid fa-users"></i> Manage Complaints</a>
+                    <a href="officer-analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+                    <a href="officer-workflow.html"><i class="fa-solid fa-clipboard-check"></i> Officer Workflow</a>
+                    <a href="#" onclick="logoutOfficer()" style="color:#e11d48; border-top:1px solid #eee; padding-top:15px; margin-top:15px;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                 </nav>
             </aside>
 
@@ -55,7 +56,7 @@
             <main class="content-area">
                 <div class="welcome-section">
                     <h1 id="welcomeText">Welcome, Officer!</h1>
-                    <a href="complaints.html" style="text-decoration:none;"><button class="btn-manage"><i class="fa-solid fa-lock"></i> Manage Complaints</button></a>
+                    <a href="officer-omplaints.html" style="text-decoration:none;"><button class="btn-manage"><i class="fa-solid fa-lock"></i> Manage Complaints</button></a>
                 </div>
 
                 <!-- Stat Cards -->
@@ -112,7 +113,7 @@
                         <div class="card active-list-card">
                             <div class="card-header">
                                 <h3>Recent Assigned Complaints</h3>
-                                <a href="complaints.html"><button class="btn-outline">View All <i class="fa-solid fa-chevron-down"></i></button></a>
+                                <a href="officer-omplaints.html"><button class="btn-outline">View All <i class="fa-solid fa-chevron-down"></i></button></a>
                             </div>
                             <div class="complaints-list" id="complaints-list">
                                 <div class="complaint-item"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>
@@ -136,7 +137,7 @@
                         <div class="card performance-card">
                              <div class="card-header">
                                 <h3>Workflow Upcoming</h3>
-                                <a href="workflow.html" class="date-range">View Full</a>
+                                 <a href="officer-workflow.html" class="date-range">View Full</a>
                              </div>
                              <div class="complaints-list mt-15" id="mini-workflow-list">
                                 <!-- Populated dynamically -->
@@ -151,6 +152,6 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
+    <script src="officer.js"></script>
 </body>
 </html>

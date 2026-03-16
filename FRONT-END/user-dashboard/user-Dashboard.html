@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CitizenConnect Dashboard</title>
-<link rel="stylesheet" href="user-dashboard.css">
+<link rel="stylesheet" href="user-Dashboard.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
@@ -46,6 +46,9 @@
       <div class="toggle-track">
         <div class="toggle-thumb" id="toggleThumb"></div>
       </div>
+    </div>
+    <div class="nav-link logout-link" onclick="logout()" style="color:#ef4444; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; margin-top:15px; cursor:pointer;">
+      <i class="fa fa-sign-out-alt"></i><span>Logout</span>
     </div>
   </div>
 </div>
@@ -360,6 +363,6 @@
 <div class="toast" id="toast"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="user-dashboard.js"></script>
+<script src="user-Dashboard.js"></script>
 </body>
 </html>

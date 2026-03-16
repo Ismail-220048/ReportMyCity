@@ -564,9 +564,34 @@ function showToast(msg, type) {
 }
 
 /* ==============================
-   INIT ON LOAD
+   LOGOUT
 ============================== */
+function logout() {
+  if (confirm("Are you sure you want to logout?")) {
+    window.location.href = "../../index.html";
+  }
+}
+
+/* ==============================
+   INIT ON LOAD
+ ============================== */
 window.addEventListener("DOMContentLoaded", () => {
+  // Load session data
+  const userName = localStorage.getItem("userName");
+  const userEmail = localStorage.getItem("userEmail");
+  if (userName) {
+    document.getElementById("topUser").textContent = userName;
+    if (document.getElementById("profileName")) document.getElementById("profileName").value = userName;
+    const initials = userName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+    const topAvatar = document.getElementById("topAvatar");
+    if (topAvatar) topAvatar.textContent = initials;
+    const profileAvatar = document.getElementById("profileAvatar");
+    if (profileAvatar) profileAvatar.textContent = initials;
+  }
+  if (userEmail && document.getElementById("profileEmail")) {
+      document.getElementById("profileEmail").value = userEmail;
+  }
+
   animateCounters();
   initCharts();
   renderComplaints();

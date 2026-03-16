@@ -20,7 +20,10 @@
             </nav>
             <div class="top-right">
                 <span class="time" id="currentTime"><i class="fa-regular fa-clock"></i> ...</span>
-                <div class="user-profile-sm"><img src="https://i.pravatar.cc/150" alt="Profile" id="navPhoto"></div>
+                <div class="user-profile-sm" id="topNavProfile">
+                    <img src="https://i.pravatar.cc/150" alt="Profile" id="navPhoto">
+                    <span class="name" id="navName">Officer <i class="fa-solid fa-caret-down"></i></span>
+                </div>
             </div>
         </header>
 
@@ -39,6 +42,7 @@
                     <a href="officer-omplaints.html"><i class="fa-solid fa-users"></i> Manage Complaints</a>
                     <a href="officer-analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
                     <a href="officer-workflow.html" class="active"><i class="fa-solid fa-clipboard-check"></i> Officer Workflow</a>
+                    <a href="#" onclick="logoutOfficer()" style="color:#e11d48; border-top:1px solid #eee; padding-top:15px; margin-top:15px;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                 </nav>
             </aside>
 

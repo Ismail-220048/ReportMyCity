@@ -2,23 +2,23 @@
    CSS VARIABLES & THEMES
 ============================== */
 :root {
-  --bg: #0f172a;
-  --sidebar-bg: #020617;
-  --card-bg: #1e293b;
-  --topbar-bg: #020617;
-  --text: #f1f5f9;
+  --bg: #05061a;
+  --sidebar-bg: rgba(5, 6, 26, 0.9);
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --topbar-bg: rgba(5, 6, 26, 0.9);
+  --text: #ffffff;
   --text-muted: #94a3b8;
-  --border: #1e293b;
-  --input-bg: #0f172a;
+  --border: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.05);
   --accent: #38bdf8;
   --accent-hover: #0ea5e9;
-  --shadow: rgba(0,0,0,0.4);
-  --modal-bg: #1e293b;
-  --modal-text: #f1f5f9;
-  --total: linear-gradient(135deg,#22c1c3,#1a9e9f);
-  --pending-grad: linear-gradient(135deg,#f59e0b,#d97706);
-  --progress-grad: linear-gradient(135deg,#3b82f6,#2563eb);
-  --resolved-grad: linear-gradient(135deg,#22c55e,#16a34a);
+  --shadow: rgba(0, 0, 0, 0.6);
+  --modal-bg: #05061a;
+  --modal-text: #ffffff;
+  --total: linear-gradient(135deg, #00f2ff, #7b6cff);
+  --pending-grad: linear-gradient(135deg, #f59e0b, #d97706);
+  --progress-grad: linear-gradient(135deg, #3b82f6, #2563eb);
+  --resolved-grad: linear-gradient(135deg, #22c55e, #16a34a);
 }
 
 [data-theme="light"] {
@@ -55,6 +55,7 @@ body {
 .sidebar {
   width: 240px;
   background: var(--sidebar-bg);
+  backdrop-filter: blur(10px);
   padding: 0;
   height: 100vh;
   position: fixed;
@@ -63,7 +64,7 @@ body {
   flex-direction: column;
   z-index: 200;
   transition: transform 0.3s ease, background 0.3s;
-  border-right: 1px solid rgba(255,255,255,0.05);
+  border-right: 1px solid var(--border);
 }
 
 .sidebar-header {
@@ -307,6 +308,8 @@ body {
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
   box-shadow: 0 4px 15px var(--shadow);
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--border);
 }
 
 .card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px var(--shadow); }
@@ -473,19 +476,20 @@ textarea { resize: none; height: 90px; }
 ============================== */
 .submit-btn {
   padding: 12px 28px;
-  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  background: linear-gradient(45deg, #d8274e, #ee0c45);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 25px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex; align-items: center; gap: 8px;
   transition: transform 0.2s, box-shadow 0.2s;
   margin-top: 8px;
+  box-shadow: 0 0 15px rgba(216, 39, 78, 0.4);
 }
 
-.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(56,189,248,0.4); }
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 0 25px rgba(216, 39, 78, 0.7); }
 
 /* ==============================
    COMPLAINTS LIST

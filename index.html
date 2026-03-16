@@ -217,19 +217,34 @@ nav button:hover{
 }
 
 .feature-card{
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(10px);
-  border-radius:15px;
-  padding:30px;
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(20px);
+  border-radius:20px;
+  padding:40px;
   color:white;
-  transition:.4s;
-  border:1px solid rgba(255,255,255,0.1);
+  transition: .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border:1px solid rgba(255,255,255,0.05);
+  position: relative;
+  overflow: hidden;
 }
 
 .feature-card:hover{
-  transform:translateY(-10px) scale(1.03);
-  box-shadow:0 0 30px rgba(0,255,200,0.5);
+  transform:translateY(-12px) scale(1.02);
+  box-shadow:0 0 30px rgba(56, 189, 248, 0.3), 0 0 10px rgba(123, 108, 255, 0.2);
+  border-color: rgba(56, 189, 248, 0.5);
 }
+
+.feature-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.1), transparent);
+    opacity: 0;
+    transition: 0.4s;
+}
+
+.feature-card:hover::after { opacity: 1; }
 
 .feature-card .icon{
   font-size:40px;
@@ -255,14 +270,14 @@ nav button:hover{
 <canvas id="bg"></canvas>
 
 <div class="logo">
-  <img src="../asserts/logo.png" alt="CivicTrack Logo" width="300">
+  <img src="asserts/logo.png" alt="CivicTrack Logo" width="300">
 </div>
 
 <nav>
   <a href="#">Home</a>
   <a href="#features">Features</a>
-  <a href="#">Reviews</a>
-  <a href="FRONT-END/login-signup/login.html"><button>Sign In</button></a>
+  <a href="FRONT-END/af.html">Official Portal</a>
+  <a href="FRONT-END/login-signup/login.html"><button>Sign In / Sign Up</button></a>
 </nav>
 
 <div class="horizon"></div>
@@ -275,11 +290,15 @@ nav button:hover{
       to report civic issues quickly and transparently. CivicTrack allows people 
       to submit complaints like road damage, water leakage, garbage problems, 
       and public safety issues with location and images.
-    </p><a href="FRONT-END/af.html">
+    </p>
+    <a href="FRONT-END/login-signup/signup.html">
+        <button style="margin-top:20px; padding:12px 30px; font-size:16px;">Get Started</button>
+    </a>
   </div>
 
-  <img src="../asserts/laptop.png" alt="CivicTrack Admin Panel">
-</div></a>
+  <img src="asserts/laptop.png" alt="CivicTrack Admin Panel">
+</div>
+
 
 <section id="features">
 
@@ -394,6 +413,6 @@ function animate(){
 
 animate()
 </script>
-
+  
 </body>
 </html>

@@ -3,72 +3,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OTP Verification</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<title>OTP Verification - CivicTrack</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-body{height:100vh;display:flex;align-items:center;justify-content:center;background:#0f172a;background-size:cover;background-position:center;background-image:url("../asserts/sunset-sea.jpg");}
-.container{width:400px;padding:50px;background:rgba(0,0,0,0.55);backdrop-filter:blur(10px);border-radius:15px;text-align:center;color:white;box-shadow:0 20px 40px rgba(0,0,0,0.6);}
-h2{margin-bottom:10px;}
-p{font-size:14px;opacity:.8;margin-bottom:30px;}
-.otp-box{display:flex;justify-content:center;gap:10px;margin-bottom:25px;}
-.otp-box input{width:50px;height:50px;border:none;border-radius:8px;text-align:center;font-size:20px;background:rgba(255,255,255,0.1);color:white;outline:none;}
-button{width:100%;padding:12px;border:none;background:#e11d48;color:white;font-weight:600;border-radius:6px;cursor:pointer;transition:.3s;}
-button:hover{background:#be123c;}
-.resend{margin-top:15px;font-size:13px;}
-.resend a{color:#f43f5e;text-decoration:none;}
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #05061a;
+    overflow: hidden;
+    color: white;
+}
+#bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+.container {
+    width: 450px;
+    padding: 60px 40px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5), 0 0 20px rgba(123,108,255,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+    z-index: 10;
+}
+
+h2 { 
+    margin-bottom: 15px; 
+    font-size: 28px; 
+    letter-spacing: 1px; 
+    color: #fff;
+    text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+}
+
+p { font-size: 14px; opacity: 0.8; margin-bottom: 40px; color: #cbd5e1; }
+
+.otp-box { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; }
+
+.otp-box input {
+    width: 60px;
+    height: 60px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.05);
+    color: white;
+    outline: none;
+    transition: 0.3s;
+}
+
+.otp-box input:focus {
+    border-color: #38bdf8;
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+}
+
+button {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    background: linear-gradient(45deg, #7b6cff, #38bdf8);
+    color: white;
+    font-weight: 700;
+    font-size: 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.4s;
+    box-shadow: 0 5px 20px rgba(123,108,255,0.3);
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.5);
+}
+
+.resend { margin-top: 25px; font-size: 14px; color: #94a3b8; }
+.resend a { color: #38bdf8; text-decoration: none; font-weight: 600; transition: 0.3s; }
+.resend a:hover { text-shadow: 0 0 8px rgba(56, 189, 248, 0.8); }
+
 </style>
 </head>
 <body>
 
+<canvas id="bg"></canvas>
+
 <div class="container">
-  <h2>OTP Verification</h2>
-  <p>OTP sent to your phone</p>
+  <h2>Verify Identity</h2>
+  <p>An authentication code has been sent to your registered device.</p>
 
   <div class="otp-box">
-    <input type="text" maxlength="1">
-    <input type="text" maxlength="1">
-    <input type="text" maxlength="1">
-    <input type="text" maxlength="1">
+    <input type="text" maxlength="1" oninput="moveToNext(this, 1)">
+    <input type="text" maxlength="1" oninput="moveToNext(this, 2)">
+    <input type="text" maxlength="1" oninput="moveToNext(this, 3)">
+    <input type="text" maxlength="1" oninput="moveToNext(this, 4)">
   </div>
 
-  <button onclick="verifyOTP()">Verify OTP</button>
+  <button onclick="verifyOTP()">VERIFY OTP</button>
 
   <div class="resend">
-    Didn't receive OTP? <a href="#" onclick="resendOTP()">Resend</a>
+    Didn't receive the code? <a href="#" onclick="resendOTP()">Resend OTP</a>
   </div>
 </div>
 
 <script>
+// ===== Particle Background =====
+const canvas=document.getElementById("bg");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+let particles=[];
+window.addEventListener("resize",()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
+for(let i=0;i<80;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    vx:(Math.random()-0.5)*0.5,
+    vy:(Math.random()-0.5)*0.5
+  });
+}
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach((p,i)=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0 || p.x>canvas.width) p.vx*=-1;
+    if(p.y<0 || p.y>canvas.height) p.vy*=-1;
+    ctx.beginPath(); ctx.arc(p.x,p.y,1.5,0,Math.PI*2); ctx.fillStyle="rgba(56,189,248,0.4)"; ctx.fill();
+    for(let j=i;j<particles.length;j++){
+      let dx=p.x-particles[j].x;
+      let dy=p.y-particles[j].y;
+      let dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<100){
+        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(particles[j].x,particles[j].y);
+        ctx.strokeStyle="rgba(123,108,255,0.15)"; ctx.stroke();
+      }
+    }
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+function moveToNext(el, nextIdx) {
+    if (el.value.length === 1 && nextIdx < 4) {
+        document.querySelectorAll(".otp-box input")[nextIdx].focus();
+    }
+}
+
 function verifyOTP(){
     const otpInputs = document.querySelectorAll(".otp-box input");
     let otp = "";
     otpInputs.forEach(input => otp += input.value);
-
-    if(otp.length < 4){
-        alert("Enter complete OTP");
-        return;
-    }
-
+    if(otp.length < 4){ alert("Enter complete OTP"); return; }
     const phone = localStorage.getItem("phone");
-    if(!phone){
-        alert("Phone not found. Please sign up again.");
-        window.location.href = "signup.html";
-        return;
-    }
-
-    fetch("../BACKEND/verify_otp.php", {
-        method:"POST",
-        headers: {"Content-Type": "application/json"},
+    if(!phone){ alert("Phone not found. Please sign up again."); window.location.href = "signup.html"; return; }
+    fetch("../../BACKEND/verify_otp.php", {
+        method:"POST", headers: {"Content-Type": "application/json"},
         body: JSON.stringify({phone_number: phone, otp: otp})
     })
     .then(res => res.json())
     .then(data => {
-        if(data.success){
-            window.location.href = "create-account.html";
-        } else {
-            alert(data.error || "OTP verification failed");
-        }
+        if(data.success){ window.location.href = "create-account.html"; }
+        else { alert(data.error || "OTP verification failed"); }
     })
     .catch(err => console.error(err));
 }
@@ -76,15 +175,13 @@ function verifyOTP(){
 function resendOTP(){
     const phone = localStorage.getItem("phone");
     if(!phone) return alert("Phone not found");
-    fetch("../BACKEND/send_otp.php", {
-        method:"POST",
-        headers: {"Content-Type":"application/json"},
+    fetch("../../BACKEND/send_otp.php", {
+        method:"POST", headers: {"Content-Type":"application/json"},
         body: JSON.stringify({phone_number: phone})
     })
     .then(res => res.json())
     .then(data => alert(data.success ? "OTP Sent Again" : data.error));
 }
 </script>
-
 </body>
 </html>
