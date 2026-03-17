@@ -10,6 +10,15 @@ const mockOfficer = {
 let mockComplaints = [];
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is logged in as officer
+    const userRole = localStorage.getItem("userRole");
+    
+    if(!userRole || userRole !== "officer") {
+        alert("Unauthorized access. Please login as an officer.");
+        window.location.href = "../login-signup/login.html";
+        return;
+    }
+    
     // Load session data
     const userName = localStorage.getItem("userName");
     const userId = localStorage.getItem("userId");
@@ -245,4 +254,4 @@ window.updateStatusWorkflow = async (compId, newStatus) => {
     if(c) { c.status = newStatus; initWorkflow(); }
 };
 
-window.logoutOfficer = () => { if(confirm("Are you sure you want to logout?")) window.location.href = "../../index.html"; };
+window.logoutOfficer = () => { if(confirm("Are you sure you want to logout?")) { localStorage.clear(); window.location.href = "../../index.html"; } };

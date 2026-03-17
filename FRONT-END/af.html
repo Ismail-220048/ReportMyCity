@@ -129,8 +129,78 @@ select option {
 /* ======= Login Form Centered ======= */
 #loginForm { max-width: 450px; margin: 0 auto; }
 
+/* ======= Demo Credentials ======= */
+.demo-section {
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.demo-section h3 {
+    color: #38bdf8;
+    margin-bottom: 12px;
+    font-size: 16px;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.demo-credentials {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+.cred-box {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.cred-box strong {
+    color: #38bdf8;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.cred-item {
+    color: #cbd5e1;
+    margin: 4px 0;
+}
+
+.demo-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.demo-btn {
+    padding: 10px 15px;
+    background: rgba(56, 189, 248, 0.2);
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    color: #38bdf8;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.demo-btn:hover {
+    background: rgba(56, 189, 248, 0.3);
+    border-color: #38bdf8;
+}
+
 /* Responsive */
-@media(max-width:700px){ .signup-columns { flex-direction:column; gap:20px; } }
+@media(max-width:700px){ 
+    .signup-columns { flex-direction:column; gap:20px; }
+    .demo-credentials { grid-template-columns: 1fr; }
+    .demo-buttons { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -147,6 +217,27 @@ select option {
   </div>
 
   <!-- ===== LOGIN FORM ===== -->
+  <!-- Demo Credentials Section -->
+  <div id="demoSection" class="demo-section" style="display:none;">
+    <h3>🔑 Demo Credentials</h3>
+    <div class="demo-credentials">
+      <div class="cred-box">
+        <strong>ADMIN</strong>
+        <div class="cred-item">📧 admin@civictrack.com</div>
+        <div class="cred-item">🔒 admin123</div>
+      </div>
+      <div class="cred-box">
+        <strong>OFFICER</strong>
+        <div class="cred-item">📧 officer@civictrack.com</div>
+        <div class="cred-item">🔒 officer123</div>
+      </div>
+    </div>
+    <div class="demo-buttons">
+      <button type="button" class="demo-btn" onclick="demoLogin('admin')">Try Admin</button>
+      <button type="button" class="demo-btn" onclick="demoLogin('officer')">Try Officer</button>
+    </div>
+  </div>
+
   <form id="loginForm" class="active">
     <label for="loginEmail">Email</label>
     <input type="email" id="loginEmail" placeholder="Enter email" required>
@@ -203,6 +294,20 @@ select option {
 </div>
 
 <script>
+// ===== Check PHP Server on Page Load =====
+window.addEventListener('DOMContentLoaded', function() {
+    // Test if PHP server is running
+    fetch("../BACKEND/test.php")
+        .then(res => res.json())
+        .then(data => {
+            console.log("✅ PHP Server is running!", data);
+        })
+        .catch(err => {
+            console.error("❌ PHP Server ERROR:", err.message);
+            alert("⚠️ ERROR: PHP Server is not running!\n\nPlease run this command in PowerShell:\nphp -S localhost:8000\n\nThen refresh this page.");
+        });
+});
+
 // ===== Tab Toggle =====
 function showTab(tab){
     if(tab==='login'){
@@ -210,11 +315,32 @@ function showTab(tab){
         document.getElementById('signupForm').classList.remove('active');
         document.getElementById('loginTab').classList.add('active');
         document.getElementById('signupTab').classList.remove('active');
+        document.getElementById('demoSection').style.display = 'block';
     } else {
         document.getElementById('loginForm').classList.remove('active');
         document.getElementById('signupForm').classList.add('active');
         document.getElementById('loginTab').classList.remove('active');
         document.getElementById('signupTab').classList.add('active');
+        document.getElementById('demoSection').style.display = 'none';
+    }
+}
+
+// ===== Demo Login Function =====
+function demoLogin(role) {
+    const credentials = {
+        'admin': { email: 'admin@civictrack.com', password: 'admin123' },
+        'officer': { email: 'officer@civictrack.com', password: 'officer123' }
+    };
+
+    if (credentials[role]) {
+        document.getElementById('loginEmail').value = credentials[role].email;
+        document.getElementById('loginPassword').value = credentials[role].password;
+        document.getElementById('loginRole').value = role;
+        
+        // Auto-submit after a short delay for UX
+        setTimeout(() => {
+            document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        }, 300);
     }
 }
 
@@ -255,25 +381,55 @@ document.getElementById("loginForm").addEventListener("submit", e=>{
     const password = document.getElementById("loginPassword").value;
     const role = document.getElementById("loginRole").value;
 
+    if (!email || !password || !role) {
+        alert("Please fill in all fields");
+        return;
+    }
+
+    console.log("Login attempt:", { email, role });
+
     fetch("../BACKEND/af-login.php", {
         method:"POST",
         headers:{"Content-Type":"application/x-www-form-urlencoded"},
         body:`email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&role=${encodeURIComponent(role)}`
     })
-    .then(res=>res.json())
-    .then(data=>{
-        if(data.status==="success"){
-            alert("Login successful!");
-            // Store session info
-            localStorage.setItem("userRole", role);
-            localStorage.setItem("userName", data.name);
-            localStorage.setItem("userId", data.user_id);
-            window.location.href = (role==="admin") ? "admin_dashboard/admin-dashborad.html" : "officer-dashboard/officer.html";
-        } else {
-            alert(data.message);
+    .then(res=>{
+        console.log("Response status:", res.status);
+        return res.text();
+    })
+    .then(text=>{
+        console.log("Response text:", text);
+        try {
+            const data = JSON.parse(text);
+            console.log("Parsed data:", data);
+            
+            if(data.status==="success"){
+                console.log("Login successful, redirecting...");
+                // Store session info
+                localStorage.setItem("userRole", role);
+                localStorage.setItem("userName", data.name);
+                localStorage.setItem("userId", data.user_id);
+                
+                // Redirect path
+                const redirectPath = (role==="admin") ? "admin_dashboard/admin-dashborad.html" : "officer-dashboard/officer.html";
+                console.log("Redirecting to:", redirectPath);
+                
+                // Use setTimeout to ensure localStorage is saved before redirect
+                setTimeout(() => {
+                    window.location.href = redirectPath;
+                }, 500);
+            } else {
+                alert(data.message || "Login failed");
+            }
+        } catch(parseErr) {
+            console.error("JSON parsing error:", parseErr);
+            alert("Server error: " + text);
         }
     })
-    .catch(err=>console.error(err));
+    .catch(err=>{
+        console.error("Fetch error:", err);
+        alert("Network error: " + err.message);
+    });
 });
 
 // ===== SIGNUP SUBMISSION =====
