@@ -3,18 +3,19 @@ include '../config/db.php';
 header('Content-Type: application/json');
 
 $officerId = $_GET['officer_id'] ?? '';
+
 if (!$officerId) {
-    echo json_encode(["error" => "Officer ID required"]);
+    echo json_encode([]);
     exit;
 }
 
-// Fetch complaints sorted by date descending
 $complaints = $db->complaints->find(
     ['assigned_to' => $officerId],
     ['sort' => ['date' => -1]]
 )->toArray();
 
 $result = [];
+
 foreach ($complaints as $c) {
     $result[] = [
         "id" => (string)$c['_id'],

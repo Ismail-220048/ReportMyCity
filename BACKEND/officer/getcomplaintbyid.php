@@ -9,25 +9,28 @@ if (!$id) {
     exit;
 }
 
-$complaint = $db->complaints->findOne([
-    '_id' => new MongoDB\BSON\ObjectId($id)
-]);
+try {
+    $complaint = $db->complaints->findOne([
+        '_id' => new MongoDB\BSON\ObjectId($id)
+    ]);
 
-if (!$complaint) {
-    echo json_encode(["error" => "Not found"]);
-    exit;
+    if (!$complaint) {
+        echo json_encode(["error" => "Not found"]);
+        exit;
+    }
+
+    echo json_encode([
+        "id" => (string)$complaint['_id'],
+        "complaintId" => $complaint['complaintId'] ?? '',
+        "title" => $complaint['title'] ?? '',
+        "description" => $complaint['description'] ?? '',
+        "location" => $complaint['location'] ?? '',
+        "status" => $complaint['status'] ?? 'New',
+        "date" => $complaint['date'] ?? '',
+        "image" => $complaint['image'] ?? ''
+    ]);
+
+} catch (Exception $e) {
+    echo json_encode(["error" => "Invalid ID"]);
 }
-
-$result = [
-    "id" => (string)$complaint['_id'],
-    "complaintId" => $complaint['complaintId'] ?? '',
-    "title" => $complaint['title'] ?? '',
-    "description" => $complaint['description'] ?? '',
-    "location" => $complaint['location'] ?? '',
-    "status" => $complaint['status'] ?? 'New',
-    "date" => $complaint['date'] ?? '',
-    "image" => $complaint['image'] ?? ''
-];
-
-echo json_encode($result);
 ?>
