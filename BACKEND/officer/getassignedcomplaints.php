@@ -2,16 +2,19 @@
 include '../config/db.php';
 header('Content-Type: application/json');
 
-$officerId = $_GET['officer_id'] ?? null;
+$officerId = $_GET['officer_id'] ?? '';
 
-$query = [];
-if ($officerId) {
-    $query['assigned_to'] = $officerId;
+if (!$officerId) {
+    echo json_encode([]);
+    exit;
 }
 
-$data = $db->complaints->find($query)->toArray();
+$data = $db->complaints->find([
+    'assigned_to' => $officerId
+])->toArray();
 
 $result = [];
+
 foreach ($data as $doc) {
     $result[] = [
         "id" => (string)$doc['_id'],
@@ -19,7 +22,9 @@ foreach ($data as $doc) {
         "title" => $doc['title'] ?? '',
         "location" => $doc['location'] ?? '',
         "status" => $doc['status'] ?? 'New',
-        "date" => $doc['date'] ?? ''
+        "date" => $doc['date'] ?? '',
+        "lat" => $doc['lat'] ?? null,
+        "lng" => $doc['lng'] ?? null,
     ];
 }
 

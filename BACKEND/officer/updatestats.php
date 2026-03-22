@@ -5,15 +5,10 @@ header('Content-Type: application/json');
 $id = $_POST['id'] ?? '';
 $status = $_POST['status'] ?? '';
 
-if (!$id || !$status) {
-    echo json_encode(["error" => "Missing data"]);
-    exit;
-}
-
-// Ensure status is valid
 $validStatuses = ['New', 'In Progress', 'Resolved', 'Overdue'];
-if (!in_array($status, $validStatuses)) {
-    echo json_encode(["error" => "Invalid status"]);
+
+if (!$id || !in_array($status, $validStatuses)) {
+    echo json_encode(["error" => "Invalid data"]);
     exit;
 }
 
@@ -22,5 +17,5 @@ $db->complaints->updateOne(
     ['$set' => ['status' => $status]]
 );
 
-echo json_encode(["message" => "Status updated"]);
+echo json_encode(["message" => "Updated"]);
 ?>

@@ -9,20 +9,17 @@ if (!$email) {
     exit;
 }
 
-$officer = $db->officers->findOne(['email' => $email]);
+$officer = $db->officer_details->findOne(['email' => $email]);
 
 if (!$officer) {
     echo json_encode(["error" => "Officer not found"]);
     exit;
 }
 
-// Convert _id to string and select relevant fields
-$result = [
+echo json_encode([
     "id" => (string)$officer['_id'],
     "name" => $officer['name'] ?? '',
     "email" => $officer['email'] ?? '',
-    "department" => $officer['department'] ?? '',
-];
-
-echo json_encode($result);
+    "department" => $officer['department'] ?? ''
+]);
 ?>
