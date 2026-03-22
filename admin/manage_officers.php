@@ -1,0 +1,316 @@
+<?php
+/**
+ * ReportMyCity — Admin: Manage Officers
+ */
+session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header('Location: admin_login.php');
+    exit;
+}
+require_once __DIR__ . '/../config/database.php';
+
+$db = Database::getInstance();
+$officersCol   = $db->getCollection('officers');
+$complaintsCol = $db->getCollection('complaints');
+
+$allOfficers = $officersCol->find([], ['sort' => ['created_at' => -1]]);
+$officersList = iterator_to_array($allOfficers);
+
+// Get assignment counts per officer
+$officerAssignmentCounts = [];
+foreach ($officersList as $o) {
+    $oid = (string) $o['_id'];
+    $officerAssignmentCounts[$oid] = $complaintsCol->countDocuments(['assigned_officer_id' => $oid]);
+}
+
+$adminName = $_SESSION['user_name'] ?? 'Admin';
+$adminEmail = $_SESSION['user_email'] ?? 'admin@reportmycity.gov';
+$initials = strtoupper(substr($adminName, 0, 1));
+
+// Fetch pending counts for sidebar notification badges
+$officerReportsCount = $db->getCollection('officer_reports')->countDocuments(['status' => 'Pending Admin Review']);
+$userReportsCount = $db->getCollection('user_reports')->countDocuments(['status' => 'Audit Requested']);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Officers — ReportMyCity Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-inner">
+                    <img src="../assets/images/govt_emblem.png" alt="Emblem" class="sidebar-emblem">
+                    <div class="sidebar-brand-text">
+                        <h2>ReportMyCity</h2>
+                        <span>Administration Portal</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-gold-stripe"></div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-label">Main Menu</div>
+                <a href="admin_dashboard.php">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+                <a href="heatmap.php">
+                    <span class="nav-icon">🗺️</span> Heatmap
+                </a>
+                <a href="manage_complaints.php">
+                    <span class="nav-icon">📋</span> Manage Complaints
+                </a>
+                <a href="manage_users.php">
+                    <span class="nav-icon">👥</span> Manage Users
+                </a>
+                <a href="manage_officers.php" class="active">
+                    <span class="nav-icon">👮</span> Manage Officers
+                </a>
+                <a href="manage_officer_reports.php">
+                    <span class="nav-icon">🛡️</span> Officer Reports
+                    <?php if($officerReportsCount > 0): ?>
+                        <span style="background:var(--danger); color:white; padding: 2px 6px; border-radius: 10px; font-size: 0.65rem; margin-left: 5px;"><?php echo $officerReportsCount; ?></span>
+                    <?php endif; ?>
+                </a>
+                <a href="manage_user_reports.php">
+                    <span class="nav-icon">🚩</span> Fake Complaints
+                    <?php if($userReportsCount > 0): ?>
+                        <span style="background:var(--warning); color:var(--gov-navy); padding: 2px 6px; border-radius: 10px; font-size: 0.65rem; margin-left: 5px;"><?php echo $userReportsCount; ?></span>
+                    <?php endif; ?>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-avatar"><?php echo $initials; ?></div>
+                    <div>
+                        <div class="sidebar-user-name"><?php echo htmlspecialchars($adminName); ?></div>
+                        <div class="sidebar-user-role">Administrator</div>
+                    </div>
+                </div>
+                <a href="../logout.php">
+                    <i class="fa fa-sign-out"></i> Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main-content">
+
+            <div class="page-header">
+                                <div class="header-left">
+                    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+                    <div class="header-logo-group">
+                        <img src="../assets/images/govt_emblem.png" alt="Emblem" style="height: 35px; width: auto; filter: drop-shadow(0 0 4px rgba(250, 249, 248, 0.3));">
+                        <span>ReportMyCity</span>
+                    </div>
+                    <h1>Manage Officers</h1>
+                </div>
+                <div class="user-info">
+                    <span style="font-size:0.82rem; color:var(--text-muted);"><?php echo date('d M Y'); ?></span>
+                    <span>Welcome, <?php echo htmlspecialchars($adminName); ?></span>
+                    <!-- Profile Dropdown -->
+                    <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
+                        <div class="user-avatar">
+                            <?php echo $initials; ?>
+                        </div>
+                        <div class="profile-dropdown-menu">
+                            <div class="profile-dropdown-header">
+                                <strong><?php echo htmlspecialchars($adminName); ?></strong>
+                                <span><?php echo htmlspecialchars($adminEmail); ?></span>
+                            </div>
+                            <a href="../logout.php" class="dropdown-logout">
+                                <div class="dropdown-icon">🚪</div> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+                <!-- Add Officer Card -->
+                <div class="card">
+                <div class="card-header">
+                    <h3>➕ Add New Officer</h3>
+                </div>
+                <form id="addOfficerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="officer-name">Full Name</label>
+                            <input type="text" id="officer-name" name="name" placeholder="Officer Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="officer-email">Email</label>
+                            <input type="email" id="officer-email" name="email" placeholder="officer@example.com" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="officer-phone">Phone</label>
+                            <input type="tel" id="officer-phone" name="phone" placeholder="+91 9876543210">
+                        </div>
+                        <div class="form-group">
+                            <label for="officer-department">Department (Category)</label>
+                            <select id="officer-department" name="department" required>
+                                <option value="">Select Department</option>
+                                <option value="Garbage">Garbage</option>
+                                <option value="Electricity">Electricity</option>
+                                <option value="Water">Water</option>
+                                <option value="Roads">Roads</option>
+                                <option value="Sewage">Sewage</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="officer-password">Password</label>
+                            <input type="password" id="officer-password" name="password" placeholder="Min. 6 characters" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Officer</button>
+                </form>
+            </div>
+
+            <!-- Officers Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>👮 All Officers (<?php echo count($officersList); ?>)</h3>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search officers...">
+                    </div>
+                </div>
+
+                <?php if (empty($officersList)): ?>
+                    <div class="empty-state">
+                        <div class="empty-icon">👮</div>
+                        <p>No officers registered yet.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="table-wrapper">
+                        <table id="officers-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Assignments</th>
+                                    <th>Added</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($officersList as $o):
+                                    $oid = (string) $o['_id'];
+                                    $assignCount = $officerAssignmentCounts[$oid] ?? 0;
+                                ?>
+                                <tr id="officer-row-<?php echo $oid; ?>">
+                                    <td style="color: var(--text-primary); font-weight: 500;">
+                                        <div style="display:flex;align-items:center;gap:0.65rem;">
+                                            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--warning),var(--danger));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.82rem;flex-shrink:0;">
+                                                <?php echo strtoupper(substr($o['name'], 0, 1)); ?>
+                                            </div>
+                                            <?php echo htmlspecialchars($o['name']); ?>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge" style="background:var(--primary-dark);"><?php echo htmlspecialchars($o['department'] ?? 'General'); ?></span></td>
+                                    <td><?php echo htmlspecialchars($o['email']); ?></td>
+                                    <td><?php echo htmlspecialchars($o['phone'] ?? '—'); ?></td>
+                                    <td>
+                                        <?php if ($assignCount > 0): ?>
+                                            <span style="color:var(--primary-light);font-weight:600;"><?php echo $assignCount; ?> assigned</span>
+                                        <?php else: ?>
+                                            <span style="color:var(--text-muted);">0</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($o['created_at'] ?? '—'); ?></td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="btn btn-danger btn-sm" onclick="deleteOfficer('<?php echo $oid; ?>')">🗑️ Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../assets/js/main.js"></script>
+    <script>
+        initTableSearch('search-input', 'officers-table');
+
+        document.getElementById('addOfficerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('officer-name').value.trim();
+            const email = document.getElementById('officer-email').value.trim();
+            const phone = document.getElementById('officer-phone').value.trim();
+            const department = document.getElementById('officer-department').value;
+            const password = document.getElementById('officer-password').value;
+
+            if (!name || !email || !password || !department) {
+                showToast('Name, email, department, and password are required.', 'error');
+                return;
+            }
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters.', 'error');
+                return;
+            }
+
+            const result = await postJSON('../api/manage_officers.php', {
+                action: 'add',
+                name: name,
+                email: email,
+                phone: phone,
+                department: department,
+                password: password
+            });
+
+            if (result.success) {
+                showToast(result.message, 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast(result.message, 'error');
+            }
+        });
+
+        async function deleteOfficer(id) {
+            if (!confirmDelete('Delete this officer? Their assignments will be unassigned.')) return;
+
+            const result = await postJSON('../api/manage_officers.php', {
+                action: 'delete',
+                officer_id: id
+            });
+
+            if (result.success) {
+                showToast(result.message, 'success');
+                const row = document.getElementById('officer-row-' + id);
+                if (row) row.remove();
+            } else {
+                showToast(result.message, 'error');
+            }
+        }
+    </script>
+    <script>
+        // Profile Dropdown
+        const pdw = document.getElementById('profileDropdownWrapper');
+        if (pdw) {
+            pdw.addEventListener('click', function(e) { e.stopPropagation(); this.classList.toggle('open'); });
+            document.addEventListener('click', () => pdw.classList.remove('open'));
+        }
+    </script>
+</body>
+</html>
