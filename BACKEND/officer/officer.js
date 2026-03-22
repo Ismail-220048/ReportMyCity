@@ -19,6 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const userEmail = localStorage.getItem("userEmail");
     const userId = localStorage.getItem("userId");
 
+    if (!userEmail || !userId) {
+        alert("Session expired. Please login again.");
+        window.location.href = "../login-signup/login.html";
+        return;
+    }
+
     loadDashboard(userEmail, userId);
 });
 
@@ -27,27 +33,39 @@ document.addEventListener('DOMContentLoaded', () => {
 ============================== */
 async function loadDashboard(email, officerId) {
     try {
-        // Officer details
+
+        // 🔹 Fetch officer details
         const officerRes = await fetch(`../BACKEND/officer/getofficer.php?email=${email}`);
         officer = await officerRes.json();
 
-        // Complaints assigned to officer
+        if (officer.error) {
+            console.error(officer.error);
+            return;
+        }
+
+        // 🔹 Fetch complaints
         const compRes = await fetch(`../BACKEND/officer/getassignedcomplaints.php?officer_id=${officerId}`);
         complaints = await compRes.json();
 
+        if (!Array.isArray(complaints)) {
+            complaints = [];
+        }
+
         populateProfile(officer);
 
-        // Detect page
+        // 🔹 Detect page type
         if (document.getElementById('complaintsTableBody')) {
             initComplaintsPage();
-        } else if (document.getElementById('workflowTimeline')) {
+        } 
+        else if (document.getElementById('workflowTimeline')) {
             loadWorkflow(officerId);
-        } else {
+        } 
+        else {
             initDashboard();
         }
 
     } catch (err) {
-        console.error("Error loading data:", err);
+        console.error("Error loading dashboard:", err);
     }
 }
 
@@ -57,9 +75,13 @@ async function loadDashboard(email, officerId) {
 function populateProfile(officer) {
     if (!officer) return;
 
-    document.getElementById('navName').innerHTML = `${officer.name} <i class="fa-solid fa-caret-down"></i>`;
-    document.getElementById('sideName').innerText = officer.name;
-    document.getElementById('sideId').innerText = `ID: ${officer.id}`;
+    const navName = document.getElementById('navName');
+    const sideName = document.getElementById('sideName');
+    const sideId = document.getElementById('sideId');
+
+    if (navName) navName.innerHTML = `${officer.name} <i class="fa-solid fa-caret-down"></i>`;
+    if (sideName) sideName.innerText = officer.name;
+    if (sideId) sideId.innerText = `ID: ${officer.id}`;
 }
 
 /* ==============================
@@ -98,13 +120,17 @@ function initDashboard() {
     const listEl = document.getElementById('complaints-list');
 
     if (listEl) {
-        listEl.innerHTML = complaints.map(c => `
-            <div class="complaint-item">
-                <b>${c.title}</b><br>
-                <small>${c.location}</small><br>
-                <span>${c.status}</span>
-            </div>
-        `).join('');
+        if (!complaints.length) {
+            listEl.innerHTML = `<p>No complaints assigned</p>`;
+        } else {
+            listEl.innerHTML = complaints.map(c => `
+                <div class="complaint-item">
+                    <b>${c.title}</b><br>
+                    <small>${c.location}</small><br>
+                    <span>${c.status}</span>
+                </div>
+            `).join('');
+        }
     }
 
     loadChart(stats);
@@ -173,16 +199,22 @@ function setupFilters() {
 ============================== */
 window.updateStatus = async (id, status) => {
     try {
-        await fetch('../BACKEND/officer/updateStatus.php', {
+        const res = await fetch('../BACKEND/officer/updatestatus.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `id=${id}&status=${status}`
         });
 
-        // Update locally
+        const data = await res.json();
+        if (data.error) {
+            console.error(data.error);
+            return;
+        }
+
+        // update locally
         complaints = complaints.map(c => c.id === id ? { ...c, status } : c);
 
-        // Re-render
+        // re-render
         if (document.getElementById('complaintsTableBody')) {
             renderComplaintsTable(complaints);
         } else {
@@ -190,7 +222,7 @@ window.updateStatus = async (id, status) => {
         }
 
     } catch (err) {
-        console.error(err);
+        console.error("Update error:", err);
     }
 };
 
@@ -219,15 +251,7 @@ function loadChart(stats) {
 }
 
 /* ==============================
-   LOGOUT
-============================== */
-function logoutOfficer() {
-    localStorage.clear();
-    window.location.href = "../../index.html";
-}
-
-/* ==============================
-   WORKFLOW TIMELINE
+   WORKFLOW
 ============================== */
 async function loadWorkflow(officerId) {
     try {
@@ -238,32 +262,50 @@ async function loadWorkflow(officerId) {
         if (!timeline) return;
 
         if (!data.length) {
-            timeline.innerHTML = `<div style="margin-left:50px;"><i class="fa-solid fa-circle-exclamation"></i> No workflow items</div>`;
+            timeline.innerHTML = `<p>No workflow items</p>`;
             return;
         }
 
         timeline.innerHTML = data.map(c => `
             <div class="timeline-item">
-                <div class="timeline-icon ${c.status.replace(/\s/g,'')}">
-                    <i class="fa-solid fa-clipboard-check"></i>
-                </div>
+                <div class="timeline-icon ${c.status.replace(/\s/g,'')}"></div>
                 <div class="timeline-content">
-                    <h3>${c.title} <span class="${c.status.replace(/\s/g,'')}">${c.status}</span></h3>
-                    <p>Location: ${c.location}</p>
-                    <div class="timeline-date"><i class="fa-regular fa-calendar"></i> ${c.date || '-'}</div>
+                    <h3>${c.title} <span>${c.status}</span></h3>
+                    <p>${c.location}</p>
+                    <small>${c.date || '-'}</small>
                 </div>
             </div>
         `).join('');
 
     } catch (err) {
-        console.error(err);
+        console.error("Workflow error:", err);
     }
 }
 
-// Auto-load workflow if timeline exists
-document.addEventListener('DOMContentLoaded', () => {
-    const officerId = localStorage.getItem("userId");
-    if (document.getElementById('workflowTimeline') && officerId) {
-        loadWorkflow(officerId);
-    }
-});
+/* ==============================
+   LOGOUT
+============================== */
+function logoutOfficer() {
+    localStorage.clear();
+    window.location.href = "../../index.html";
+}
+
+
+function loadMap() {
+    const mapEl = document.getElementById("main-map");
+    if (!mapEl) return;
+
+    const map = L.map('main-map').setView([16.5062, 80.6480], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    complaints.forEach(c => {
+        if (c.lat && c.lng) {
+            L.marker([c.lat, c.lng])
+                .addTo(map)
+                .bindPopup(`<b>${c.title}</b><br>${c.location}`);
+        }
+    });
+}

@@ -1,15 +1,11 @@
 <?php
 include '../config/db.php';
-
-$new = $db->complaints->countDocuments(['status' => 'pending']);
-$progress = $db->complaints->countDocuments(['status' => 'in-progress']);
-$overdue = $db->complaints->countDocuments(['status' => 'overdue']);
-$resolved = $db->complaints->countDocuments(['status' => 'resolved']);
+header('Content-Type: application/json');
 
 echo json_encode([
-  'new' => $new,
-  'progress' => $progress,
-  'overdue' => $overdue,
-  'resolved' => $resolved
+  'new' => $db->complaints->countDocuments(['status' => 'New']),
+  'progress' => $db->complaints->countDocuments(['status' => 'In Progress']),
+  'overdue' => $db->complaints->countDocuments(['status' => 'Overdue']),
+  'resolved' => $db->complaints->countDocuments(['status' => 'Resolved'])
 ]);
 ?>
